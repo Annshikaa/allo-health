@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactElement } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatPrice } from "@/lib/utils";
 
@@ -41,7 +41,7 @@ const WALLETS = [
   { id: "amazonpay", name: "Amazon Pay", gradient: "from-orange-400 to-yellow-400", icon: "A" },
 ];
 
-const METHOD_TABS: { id: Method; label: string; icon: JSX.Element }[] = [
+const METHOD_TABS: { id: Method; label: string; icon: ReactElement }[] = [
   {
     id: "card",
     label: "Card",
