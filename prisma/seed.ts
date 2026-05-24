@@ -9,10 +9,13 @@ async function main() {
   await prisma.product.deleteMany();
   await prisma.warehouse.deleteMany();
 
-  const [mumbai, delhi, bangalore] = await Promise.all([
-    prisma.warehouse.create({ data: { name: "Mumbai Fulfilment Hub", city: "Mumbai" } }),
-    prisma.warehouse.create({ data: { name: "Delhi NCR Warehouse", city: "Delhi" } }),
-    prisma.warehouse.create({ data: { name: "Bangalore Distribution Centre", city: "Bangalore" } }),
+  const [mumbai, delhi, bangalore, chennai, hyderabad, bhopal] = await Promise.all([
+    prisma.warehouse.create({ data: { name: "Mumbai Fulfilment Hub",          city: "Mumbai"    } }),
+    prisma.warehouse.create({ data: { name: "Delhi NCR Warehouse",            city: "Delhi"     } }),
+    prisma.warehouse.create({ data: { name: "Bangalore Distribution Centre",  city: "Bangalore" } }),
+    prisma.warehouse.create({ data: { name: "Chennai South Hub",              city: "Chennai"   } }),
+    prisma.warehouse.create({ data: { name: "Hyderabad Logistics Park",       city: "Hyderabad" } }),
+    prisma.warehouse.create({ data: { name: "Bhopal Central Warehouse",       city: "Bhopal"    } }),
   ]);
 
   const productDefs = [
@@ -187,7 +190,7 @@ async function main() {
     productDefs.map((p) => prisma.product.create({ data: p }))
   );
 
-  const warehouses = [mumbai, delhi, bangalore];
+  const warehouses = [mumbai, delhi, bangalore, chennai, hyderabad, bhopal];
   const stockData: { productId: string; warehouseId: string; totalUnits: number }[] = [];
 
   products.forEach((product, i) => {
@@ -202,7 +205,7 @@ async function main() {
   });
 
   await prisma.stock.createMany({ data: stockData });
-  console.log(`✓ Seeded ${products.length} products, 3 warehouses, ${stockData.length} stock entries`);
+  console.log(`✓ Seeded ${products.length} products, ${warehouses.length} warehouses, ${stockData.length} stock entries`);
 }
 
 main()

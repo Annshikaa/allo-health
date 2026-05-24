@@ -34,9 +34,12 @@ const categoryColors: Record<string, string> = {
 };
 
 const CITY_ICONS: Record<string, string> = {
-  Mumbai: "🌆",
-  Delhi: "🏛️",
+  Mumbai:    "🌆",
+  Delhi:     "🏛️",
   Bangalore: "🌿",
+  Chennai:   "🌊",
+  Hyderabad: "💎",
+  Bhopal:    "🏞️",
 };
 
 function availableUnits(s: Stock) {
@@ -230,7 +233,7 @@ export default function WarehousesPage() {
       ) : (
         <>
           {/* Warehouse summary cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {warehouses.map((wh) => <WarehouseSummaryCard key={wh.id} warehouse={wh} />)}
           </div>
 
@@ -269,7 +272,7 @@ export default function WarehousesPage() {
               style={{
                 background: "rgba(255,255,255,0.025)",
                 borderBottom: "1px solid rgba(255,255,255,0.07)",
-                gridTemplateColumns: "1fr repeat(3, 90px)",
+                gridTemplateColumns: `1fr repeat(${warehouses.length}, 80px)`,
               }}
             >
               <span>Product</span>
@@ -293,7 +296,7 @@ export default function WarehousesPage() {
                       transition={{ delay: i * 0.02 }}
                       className="grid items-center gap-0 px-5 py-3.5 hover:bg-white/[0.02] transition-colors"
                       style={{
-                        gridTemplateColumns: "1fr repeat(3, 90px)",
+                        gridTemplateColumns: `1fr repeat(${warehouses.length}, 80px)`,
                         borderBottom: i < allProducts.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                       }}
                     >
