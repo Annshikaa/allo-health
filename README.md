@@ -125,11 +125,27 @@ This makes the endpoint safe to retry on network failures without double-booking
 
 ## Trade-offs & What I'd Add With More Time
 
-- **Optimistic UI updates** — After reserving, immediately show updated stock counts without waiting for a re-fetch; roll back on error.
-- **WebSockets / Server-Sent Events** — Push live stock changes to all connected clients so the available count updates in real-time as others reserve or release.
-- **Proper auth** — Currently reservation actions are unauthenticated. A real system needs JWT-authenticated users so reservations are user-scoped.
-- **Quantity selector** — The UI currently reserves exactly 1 unit. A quantity stepper would be straightforward to add.
-- **Reservation history** — A `/account/orders` page showing past reservations and their outcomes.
-- **Webhook on confirm** — Trigger a payment gateway webhook instead of a direct API call; handle payment failure gracefully with a 3-retry queue before releasing stock.
-- **Read replicas** — Route GET reads to a read replica; write transactions stay on the primary.
-- **Connection pooling** — Add PgBouncer (or Supabase's built-in pooler) for serverless environments where each Lambda creates a new Postgres connection.
+- **Login and user accounts** — Reservations aren't tied to anyone right now. 
+  A real system needs users so orders are scoped to them, history is reliable, 
+  and no one can cancel someone else's reservation.
+
+- **Quantity selector** — Currently always reserves exactly 1 unit. A simple 
+  +/- stepper before checkout would cover bulk buying, which is common for 
+  health and wellness products.
+
+- **Reservation history in database** — The History tab reads from browser 
+  memory, so it disappears if you switch devices or clear your browser. 
+  Proper database storage would make it persistent everywhere.
+
+- **Payment webhook** — The Confirm button calls the API directly, but in 
+  production a gateway like Razorpay tells your server whether payment 
+  succeeded — you shouldn't trust the frontend for that.
+
+- **Connection pooling** — Each Vercel function opens a fresh database 
+  connection. Under traffic spikes, Postgres hits its connection limit and 
+  requests fail before they start. A pooler reuses connections so that 
+  never happens.
+
+- **Rate limiting** — Nothing stops a script from holding all available stock 
+  without ever paying. A simple limit of a few reservations per IP per minute 
+  would prevent that kind of abuse.
