@@ -123,7 +123,7 @@ function MembraneRings() {
   const refs = useRef<(THREE.Mesh | null)[]>([]);
 
   const rings = useMemo(() =>
-    Array.from({ length: 14 }, (_, i) => ({
+    Array.from({ length: 14 }, () => ({
       x:     (Math.random() - 0.5) * 24,
       y:     (Math.random() - 0.5) * 13,
       z:     -0.5 - Math.random() * 9,

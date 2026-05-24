@@ -150,7 +150,6 @@ function ReviewsSection({ productId }: { productId: string }) {
       if (match) {
         setEligibleReservationId(match.id);
         // Check if already reviewed
-        const alreadyInList = reviews.some((rv) => rv.id && match.id);
         fetch(`/api/reviews?productId=${productId}`)
           .then((r) => r.json())
           .then((all: Review[]) => {
@@ -244,7 +243,7 @@ function ReviewsSection({ productId }: { productId: string }) {
         )}
 
         {alreadyReviewed && (
-          <span className="text-white/30 text-xs italic">You've already reviewed this product.</span>
+          <span className="text-white/30 text-xs italic">You&apos;ve already reviewed this product.</span>
         )}
       </div>
 
