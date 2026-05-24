@@ -159,7 +159,7 @@ function ReviewsSection({ productId }: { productId: string }) {
           });
       }
     });
-  }, [productId, reviews.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [productId, reviews.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
