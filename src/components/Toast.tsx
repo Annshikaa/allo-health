@@ -35,7 +35,7 @@ const icons = {
   ),
 };
 
-export default function Toast({ message, type = "error", onDismiss, duration = 4000 }: ToastProps) {
+export default function Toast({ message, type = "error", onDismiss, duration = 6000 }: ToastProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -48,12 +48,12 @@ export default function Toast({ message, type = "error", onDismiss, duration = 4
 
   return createPortal(
     <motion.div
-      initial={{ y: -24, opacity: 0, scale: 0.96 }}
+      initial={{ y: 40, opacity: 0, scale: 0.96 }}
       animate={{ y: 0, opacity: 1, scale: 1 }}
-      exit={{ y: -24, opacity: 0, scale: 0.96 }}
+      exit={{ y: 40, opacity: 0, scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 32 }}
-      className={`fixed left-1/2 z-[9999] flex items-center gap-3 px-5 py-3 rounded-xl border backdrop-blur-xl shadow-2xl max-w-sm w-full text-sm font-medium ${colors[type]}`}
-      style={{ top: "80px", x: "-50%", transformOrigin: "top center" }}
+      className={`fixed left-1/2 z-[9999] flex items-center gap-3 px-5 py-4 rounded-2xl border backdrop-blur-xl shadow-2xl max-w-md w-[92vw] text-sm font-medium ${colors[type]}`}
+      style={{ bottom: "28px", x: "-50%", transformOrigin: "bottom center" }}
     >
       {icons[type]}
       <span className="flex-1">{message}</span>
