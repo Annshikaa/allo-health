@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  description  String
+  price        Int      // price in paise (INR subunit)
+  imageUrl     String
+  category     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  stocks       Stock[]
+  reservations Reservation[]
+  reviews      Review[]
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  productId     String
+  reservationId String   @unique
+  authorName    String
+  rating        Int
+  body          String
+  createdAt     DateTime @default(now())
+
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Warehouse {
+  id        String   @id @default(cuid())
+  name      String
+  city      String
+  createdAt DateTime @default(now())
+
+  stocks Stock[]
+}
+
+model Stock {
+  id            String    @id @default(cuid())
+  totalUnits    Int
+  reservedUnits Int       @default(0)
+  updatedAt     DateTime  @updatedAt
+
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, warehouseId])
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  RELEASED
+}
+
+model Reservation {
+  id              String            @id @default(cuid())
+  quantity        Int
+  status          ReservationStatus @default(PENDING)
+  expiresAt       DateTime
+  idempotencyKey  String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+
+  warehouseId String
+
+  stockId String
+}

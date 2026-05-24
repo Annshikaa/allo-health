@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #060d0c;
+  --teal: #0d9488;
+  --teal-light: #2dd4bf;
+  --blue: #0ea5e9;
+  --text: #e8f0ef;
+  --text-muted: rgba(232,240,239,0.45);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #060d0c;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-feature-settings: "ss01", "ss02";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ───────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(45,212,191,0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(45,212,191,0.4); }
+
+/* ── Shimmer brand text ──────────────────────────── */
+.shimmer-text {
+  background: linear-gradient(135deg, #2dd4bf 0%, #0ea5e9 45%, #6366f1 75%, #2dd4bf 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ── Glass card ──────────────────────────────────── */
+.glass-card {
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.048) 0%,
+    rgba(255,255,255,0.022) 100%
+  );
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.085);
+  border-radius: 1.375rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle inner top highlight */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  pointer-events: none;
+}
+
+.glass-card:hover {
+  border-color: rgba(45,212,191,0.24);
+  box-shadow:
+    0 0 0 1px rgba(45,212,191,0.07),
+    0 20px 48px rgba(0,0,0,0.38),
+    0 4px 12px rgba(45,212,191,0.05);
+}
+
+/* ── Pulsing stock dot ───────────────────────────── */
+@keyframes stock-pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.4; transform:scale(1.8); }
+}
+.stock-dot { animation: stock-pulse 2s ease-in-out infinite; }
+
+/* ── Ripple ──────────────────────────────────────── */
+@keyframes ripple { to { transform:scale(4); opacity:0; } }
+
+/* ── Noise overlay (body pseudo-elements are used by canvas bg) */
+
+/* ── Input fields ────────────────────────────────── */
+.field-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0.875rem;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.field-input::placeholder { color: rgba(232,240,239,0.2); }
+.field-input:focus {
+  background: rgba(45,212,191,0.04);
+  border-color: rgba(45,212,191,0.45);
+  box-shadow: 0 0 0 3px rgba(45,212,191,0.08);
+}
+
+/* ── Divider ─────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+}
+
+/* ── Float animation ─────────────────────────────── */
+@keyframes float {
+  0%,100% { transform: translateY(0px); }
+  50%     { transform: translateY(-7px); }
+}
+.float { animation: float 5s ease-in-out infinite; }
+
+/* ── Glow utilities ──────────────────────────────── */
+.glow-teal { box-shadow: 0 0 28px rgba(45,212,191,0.2), 0 0 56px rgba(45,212,191,0.07); }
+.glow-blue { box-shadow: 0 0 28px rgba(14,165,233,0.2), 0 0 56px rgba(14,165,233,0.07); }
+
+/* ── Nav active underline ────────────────────────── */
+.nav-link-active {
+  color: #2dd4bf !important;
+  position: relative;
+}
+.nav-link-active::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0; right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2dd4bf, #0ea5e9);
+}
+
+/* ── Smooth page transitions ─────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Textarea ────────────────────────────────────── */
+textarea.field-input { resize: none; }
