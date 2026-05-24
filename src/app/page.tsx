@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const STATS = [
   { value: "10 min", label: "Reservation hold", color: "#3b82f6", icon: "⏱" },
-  { value: "3", label: "Fulfilment hubs", color: "#2dd4bf", icon: "🏭" },
+  { value: "6", label: "Fulfilment hubs", color: "#2dd4bf", icon: "🏭" },
   { value: "0", label: "Double bookings", color: "#10b981", icon: "✅" },
   { value: "24 h", label: "Idempotency TTL", color: "#a78bfa", icon: "🔐" },
 ];
@@ -28,8 +28,8 @@ const STEPS = [
 const FEATURES = [
   { icon: "⚡", title: "Race-condition proof", desc: "Postgres row-level locking ensures exactly one winner, even under simultaneous requests.", color: "#f59e0b" },
   { icon: "🔑", title: "Idempotent API", desc: "Replay-safe reservations via 24-hour Redis idempotency keys — no accidental double bookings.", color: "#3b82f6" },
-  { icon: "🕐", title: "Auto-expiry", desc: "Two-layer expiry: lazy GET check + cron batch release every 5 minutes frees stale holds.", color: "#2dd4bf" },
-  { icon: "🏙️", title: "Multi-warehouse", desc: "Three clinic cities — Mumbai, Delhi, Bangalore — each with independent real-time stock.", color: "#10b981" },
+  { icon: "🕐", title: "Auto-expiry", desc: "Two-layer expiry: lazy GET check + scheduled cron batch release frees stale holds automatically.", color: "#2dd4bf" },
+  { icon: "🏙️", title: "Multi-warehouse", desc: "Six fulfilment cities — Mumbai, Delhi, Bangalore, Chennai, Hyderabad & Bhopal — each with independent real-time stock.", color: "#10b981" },
   { icon: "💳", title: "4 payment methods", desc: "Card, UPI, Net Banking, and Wallets — with animated processing states and 90% demo success rate.", color: "#818cf8" },
   { icon: "📋", title: "Booking history", desc: "Persistent localStorage reservation log with live status polling and instant status badges.", color: "#f43f5e" },
 ];
@@ -117,6 +117,45 @@ export default function LandingPage() {
                 <span className="text-2xl mb-3 block">{f.icon}</span>
                 <h3 className="text-white font-bold text-sm mb-1.5" style={{ color: f.color }}>{f.title}</h3>
                 <p className="text-white/38 text-xs leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Cities ──────────────────────────────── */}
+      <section className="px-4 pb-20">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-center text-white/25 text-xs font-bold uppercase tracking-widest mb-3">Coverage</p>
+          <h2 className="text-2xl md:text-3xl font-black text-center text-white mb-3" style={{ letterSpacing: "-0.025em" }}>
+            6 fulfilment cities
+          </h2>
+          <p className="text-center text-white/35 mb-10 text-sm">Real-time stock across every hub. Reserve from your nearest city.</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {[
+              { city: "Mumbai",    icon: "🌆", tag: "Fulfilment Hub"          },
+              { city: "Delhi",     icon: "🏛️", tag: "NCR Warehouse"           },
+              { city: "Bangalore", icon: "🌿", tag: "Distribution Centre"     },
+              { city: "Chennai",   icon: "🌊", tag: "South Hub"               },
+              { city: "Hyderabad", icon: "💎", tag: "Logistics Park"          },
+              { city: "Bhopal",    icon: "🏞️", tag: "Central Warehouse"       },
+            ].map((w) => (
+              <div key={w.city}
+                className="flex items-center gap-3 p-4 rounded-2xl hover:scale-[1.02] transition-transform duration-200"
+                style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)" }}
+              >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+                  style={{ background: "rgba(45,212,191,0.08)", border: "1px solid rgba(45,212,191,0.15)" }}
+                >
+                  {w.icon}
+                </div>
+                <div>
+                  <p className="text-white font-bold text-sm">{w.city}</p>
+                  <p className="text-white/30 text-xs">{w.tag}</p>
+                </div>
+                <div className="ml-auto flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 stock-dot" />
+                </div>
               </div>
             ))}
           </div>

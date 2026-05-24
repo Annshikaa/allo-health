@@ -66,12 +66,13 @@ export default function ProductCard({
   );
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
+  const [soldOut, setSoldOut] = useState(false);
   const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: "error" | "success" | "warning" }>>([]);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const [imgError, setImgError] = useState(false);
   const selectedStock = product.stocks.find((s) => s.warehouse.id === selectedWarehouseId);
-  const available = selectedStock?.availableUnits ?? 0;
+  const available = soldOut ? 0 : (selectedStock?.availableUnits ?? 0);
   const accent = categoryColors[product.category] ?? "#2dd4bf";
   const icon = categoryIcons[product.category] ?? "🏥";
 
@@ -102,7 +103,7 @@ export default function ProductCard({
         headers: { "Content-Type": "application/json", "Idempotency-Key": `${product.id}-${selectedWarehouseId}-${Date.now()}` },
         body: JSON.stringify({ productId: product.id, warehouseId: selectedWarehouseId, quantity: 1 }),
       });
-      if (res.status === 409) { setShake(true); setTimeout(() => setShake(false), 600); addToast("No slots left — someone just grabbed the last one.", "error"); return; }
+      if (res.status === 409) { setShake(true); setTimeout(() => setShake(false), 600); setSoldOut(true); addToast("Someone just took the last unit — this item is now sold out.", "error"); return; }
       if (!res.ok) { const d = await res.json().catch(() => ({})); addToast(d.error ?? "Something went wrong.", "error"); return; }
       const data = await res.json();
       onReserved?.(selectedWarehouseId);
@@ -186,28 +187,39 @@ export default function ProductCard({
           </div>
 
           {/* Bottom row */}
-          <div className="flex items-center justify-between mt-auto pt-1">
-            <StockBadge available={available} />
-            <motion.button ref={buttonRef} whileTap={{ scale: 0.96 }} onClick={handleReserve}
-              disabled={available === 0 || loading}
-              className="px-4 py-2 rounded-lg font-bold text-xs text-white flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden transition-all"
-              style={available > 0
-                ? { background: `linear-gradient(135deg, ${accent}, #0284c7)`, boxShadow: `0 3px 16px ${accent}35` }
-                : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }
-              }
-            >
-              {loading ? (
-                <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                </svg>
-              ) : (
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-              )}
-              {loading ? "…" : available === 0 ? "Sold Out" : "Reserve"}
-            </motion.button>
+          <div className="flex flex-col gap-1.5 mt-auto pt-1">
+            <div className="flex items-center justify-between">
+              <StockBadge available={available} />
+              <motion.button ref={buttonRef} whileTap={{ scale: 0.96 }} onClick={handleReserve}
+                disabled={available === 0 || loading}
+                className="px-4 py-2 rounded-lg font-bold text-xs text-white flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden transition-all"
+                style={available > 0
+                  ? { background: `linear-gradient(135deg, ${accent}, #0284c7)`, boxShadow: `0 3px 16px ${accent}35` }
+                  : { background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }
+                }
+              >
+                {loading ? (
+                  <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                )}
+                {loading ? "…" : available === 0 ? "Sold Out" : "Reserve"}
+              </motion.button>
+            </div>
+            {soldOut && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-400 text-[11px] font-semibold text-center"
+              >
+                ⚡ Someone just took the last unit
+              </motion.p>
+            )}
           </div>
         </div>
       </motion.div>

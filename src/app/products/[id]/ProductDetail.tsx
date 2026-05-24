@@ -381,10 +381,11 @@ export default function ProductDetail({ product, related }: { product: Product; 
   );
   const [loading, setLoading] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [soldOut, setSoldOut] = useState(false);
   const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: "error" | "success" | "warning" }>>([]);
 
   const selectedStock = product.stocks.find((s) => s.warehouse.id === selectedWarehouseId);
-  const available = selectedStock?.availableUnits ?? 0;
+  const available = soldOut ? 0 : (selectedStock?.availableUnits ?? 0);
   const meta = categoryMeta[product.category] ?? { icon: "🏥", color: "#2dd4bf", tag: "Health" };
   const bullets = highlights[product.category] ?? [];
 
@@ -401,7 +402,7 @@ export default function ProductDetail({ product, related }: { product: Product; 
         headers: { "Content-Type": "application/json", "Idempotency-Key": `${product.id}-${selectedWarehouseId}-${Date.now()}` },
         body: JSON.stringify({ productId: product.id, warehouseId: selectedWarehouseId, quantity: 1 }),
       });
-      if (res.status === 409) { addToast("No slots left — someone just grabbed the last one.", "error"); return; }
+      if (res.status === 409) { setSoldOut(true); addToast("Someone just took the last unit — this item is now sold out.", "error"); return; }
       if (!res.ok) { const d = await res.json().catch(() => ({})); addToast(d.error ?? "Something went wrong.", "error"); return; }
       const data = await res.json();
       router.push(`/reservation/${data.id}`);
